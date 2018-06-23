@@ -4,15 +4,14 @@ let app = {};
 app.server = 'http://parse.sfm6.hackreactor.com/chatterbox/classes/messages';
 
 app.init = function() {
+  this.fetch();
+  setInterval(this.fetch.bind(this), 10000);
 
+  
 };
 
-app.send = () => {
-  var message = {
-    username: 'Mel Brooks',
-    text: 'It\'s good to be the king',
-    roomname: 'lobby'
-  };
+app.send = (message) => {
+  
 
   $.ajax({
     url: app.server,
@@ -30,14 +29,17 @@ app.send = () => {
 };
 
 app.fetch = () => {
-
   $.ajax({
     url: app.server,
     type: 'GET',
-    // data: JSON.stringify(message),
+    data: {'order' : '-createdAt'},
     // contentType: 'application/json',
     success: function (data) {
-      console.log('chatterbox: Message sent');
+      console.log('dataFetched');
+      // console.log(data.results);
+      app.clearMessages();
+      app.renderAllMessages(data.results);
+
     },
     error: function (data) {
       // See: https://developer.mozilla.org/en-US/docs/Web/API/console.error
@@ -50,9 +52,18 @@ app.clearMessages = () => {
   $('#chats').children().remove();
 };
 
+
+app.renderAllMessages = (data) => {
+  for(let val of data) {
+    app.renderMessage(val);
+  }
+};
+
 app.renderMessage = (msg) => {
+  let userNode = $('<p>', {'class' : 'userName user-' + msg.username}).text(msg.username);
   let childNode = $('<div>', {'class':'chatMessage ' + 'room-'+msg.roomname}).text(msg.text);
-  $('#chats').append(childNode);
+  userNode.append(childNode);
+  $('#chats').append(userNode);
 };
 
 app.renderRoom = (roomName) => {
@@ -72,7 +83,11 @@ app.renderRoom = (roomName) => {
 
 
 
+$('document').ready(function() {
+  // console.log('DOCUMENT READY');
+  app.init();
 
+});
 
 
 
