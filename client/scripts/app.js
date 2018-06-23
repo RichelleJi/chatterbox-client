@@ -88,16 +88,25 @@ app.renderRoom = (roomName) => {
 
 
 $('document').ready(function() {
-  // console.log('DOCUMENT READY');
   app.init();
   
-  // $('#submit').click(function(input) {
-  //   app.send({
-  //     username: 'Richelle',
-  //     text: input,
-  //     roomname: 'lobby '
-  //   });
-  // });
+  $('#submit').click(function(input) {
+    let urlParams = {};
+    let parts = window.location.search.replace(
+      /[?&]+([^=&]+)=([^&]*)/gi, 
+      function(m,key,value) {
+        urlParams[key] = value;
+      });
+    let msgText = $('#messageInput').val();
+    let messageBuilder = {
+      username:urlParams.username,
+      text: msgText,
+      room: '6thFloorBestFloor'
+    };
+    app.send(messageBuilder);
+    return false;
+  
+  });
 });
 
 
