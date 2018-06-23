@@ -5,14 +5,13 @@ app.server = 'http://parse.sfm6.hackreactor.com/chatterbox/classes/messages';
 
 app.init = function() {
   this.fetch();
-  setInterval(this.fetch.bind(this), 10000);
+  setInterval(this.fetch.bind(this), 1000);
 
   
 };
 
 app.send = (message) => {
   
-
   $.ajax({
     url: app.server,
     type: 'POST',
@@ -20,7 +19,9 @@ app.send = (message) => {
     contentType: 'application/json',
     success: function (data) {
       console.log('chatterbox: Message sent');
+      console.log(data);
     },
+
     error: function (data) {
       // See: https://developer.mozilla.org/en-US/docs/Web/API/console.error
       console.error('chatterbox: Failed to send message', data);
@@ -60,10 +61,13 @@ app.renderAllMessages = (data) => {
 };
 
 app.renderMessage = (msg) => {
-  let userNode = $('<p>', {'class' : 'userName user-' + msg.username}).text(msg.username);
+
+  // var node = '<div class = chatMessage> room-' + msg.roomname 
+  let userNode = $('<a>', {'class' : 'userName user-' + msg.username}).text(msg.username);
   let childNode = $('<div>', {'class':'chatMessage ' + 'room-'+msg.roomname}).text(msg.text);
   userNode.append(childNode);
   $('#chats').append(userNode);
+  // $('#chats').append(childNode);
 };
 
 app.renderRoom = (roomName) => {
@@ -86,7 +90,14 @@ app.renderRoom = (roomName) => {
 $('document').ready(function() {
   // console.log('DOCUMENT READY');
   app.init();
-
+  
+  // $('#submit').click(function(input) {
+  //   app.send({
+  //     username: 'Richelle',
+  //     text: input,
+  //     roomname: 'lobby '
+  //   });
+  // });
 });
 
 
